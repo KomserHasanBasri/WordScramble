@@ -11,9 +11,16 @@ class ViewController: UITableViewController {
     
     var allWords = [String]()
     var usedWords = [String]()
+    var scoreLabel : UILabel!
+    var score: Int = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let spacer = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        scoreLabel = UILabel()
+        scoreLabel.text = "Score"
+        scoreLabel.sizeToFit()
+        let scoreLabel = UIBarButtonItem(customView: scoreLabel)
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(promptForAnswer))
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .refresh, target: self, action: #selector(startGame))
         if let startWordsURL = Bundle.main.url(forResource: "start", withExtension: "txt") {
@@ -24,6 +31,8 @@ class ViewController: UITableViewController {
                 allWords = ["silkworm"]
             }
         }
+        toolbarItems = [spacer,scoreLabel]
+        navigationController?.isToolbarHidden = false
         startGame()
     }
     
@@ -68,6 +77,7 @@ class ViewController: UITableViewController {
                     
                     let indexPath = IndexPath(row: 0, section: 0)
                     tableView.insertRows(at: [indexPath], with: .fade)
+                    calculateScore(wordLength: lowerAnswer.utf16.count)
                     return
                     
                 } else {
@@ -116,6 +126,10 @@ class ViewController: UITableViewController {
         ac.addAction(UIAlertAction(title: "OK", style: .default))
         present(ac,animated: true)
         
+    }
+    func calculateScore(wordLength: Int) {
+        score += wordLength
+        scoreLabel.text = "\(score)"
     }
 }
 
